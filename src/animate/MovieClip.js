@@ -33,7 +33,8 @@ class MovieClip extends Container {
                 loop: loop === undefined ? true : loop,
                 labels: labels || {},
                 framerate: framerate || 0,
-                startPosition: 0
+                startPosition: 0,
+                frameSkip: false,
             };
         } else {
             // Apply defaults to options
@@ -203,6 +204,8 @@ class MovieClip extends Container {
          */
         this._totalFrames = options.duration;
 
+        this._frameSkip = options.frameSkip;
+
         /**
          * Standard tween timelines for all objects. Each element in the _timelines array
          * is a Timeline object - an array of tweens for one target, in order of occurrence.
@@ -283,6 +286,7 @@ class MovieClip extends Container {
             return;
         }
         let seconds = tickerDeltaTime / SharedTicker.speed / PIXI.settings.TARGET_FPMS / 1000;
+
         this.advance(seconds);
     }
 
@@ -720,11 +724,18 @@ class MovieClip extends Container {
         if (time) {
             this._t += time;
         }
+
         if (this._t > this._duration) {
             this._t = this.loop ? this._t - this._duration : this._duration;
         }
-        //add a tiny amount to account for potential floating point errors
-        this.currentFrame = Math.floor(this._t * this._framerate + 0.00000001);
+
+        if(this._frameSkip) {
+            //add a tiny amount to account for potential floating point errors
+            this.currentFrame = Math.floor(this._t * this._framerate + 0.00000001);
+        }else{
+            this.currentFrame++;
+        }
+
         //final error checking
         if (this.currentFrame >= this._totalFrames) {
             this.currentFrame = this._totalFrames - 1;
@@ -888,6 +899,7 @@ class MovieClip extends Container {
             } else {
                 length = Math.min(currentFrame + 1, actions.length);
             }
+
             for (i = startFrame >= 0 ? startFrame + 1 : currentFrame; i < length; ++i) {
                 if (actions[i]) {
                     let frameActions = actions[i];
