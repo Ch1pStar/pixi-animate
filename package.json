@@ -27,7 +27,7 @@
   "typings": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jiborobot/pixi-animate"
+    "url": "git+ssh://git@gitlab.dopamine.bg:n.yordanov/pixi-animate.git"
   },
   "bugs": {
     "url": "https://github.com/jiborobot/pixi-animate/issues"
