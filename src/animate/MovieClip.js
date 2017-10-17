@@ -732,14 +732,15 @@ class MovieClip extends Container {
         if(this._frameSkip) {
             //add a tiny amount to account for potential floating point errors
             this.currentFrame = Math.floor(this._t * this._framerate + 0.00000001);
+
+            //final error checking
+            if (this.currentFrame >= this._totalFrames) {
+                this.currentFrame = this._totalFrames - 1;
+            }
         }else{
-            this.currentFrame++;
+            this.currentFrame = this.loop ? (this.currentFrame%this._totalFrames) + 1 : this.currentFrame + 1;
         }
 
-        //final error checking
-        if (this.currentFrame >= this._totalFrames) {
-            this.currentFrame = this._totalFrames - 1;
-        }
         let afterUpdateOnce;
         if (this._beforeUpdate) {
             afterUpdateOnce = this._beforeUpdate(this);
